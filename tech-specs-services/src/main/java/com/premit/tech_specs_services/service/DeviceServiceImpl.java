@@ -45,4 +45,29 @@ public class DeviceServiceImpl implements DeviceService{
            return "Devices adding failed.";
        }
     }
+
+    @Override
+    public List<DeviceSpecsDTO> getAllDevices() {
+
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        List<DeviceSpecsDTO> deviceSpecsDTOList = new ArrayList<>();
+
+        List<DeviceSpecsEntity> deviceSpecsEntityList = deviceSpecsRepository.findAll();
+        deviceSpecsEntityList.stream().forEach(entity->{
+            DeviceSpecsDTO deviceSpecsDTO = new DeviceSpecsDTO();
+            deviceSpecsDTO.setId(entity.getId());
+            deviceSpecsDTO.setName(entity.getName());
+            String json = entity.getData();
+            try{
+                Map<String,Object> jsonObject = objectMapper.readValue(json, new TypeReference<Map<String, Object>>() {
+                });
+                deviceSpecsDTO.setData(jsonObject);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            deviceSpecsDTOList.add(deviceSpecsDTO);
+        });
+        return deviceSpecsDTOList;
+    }
 }

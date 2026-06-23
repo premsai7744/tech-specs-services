@@ -4,10 +4,7 @@ import com.premit.tech_specs_services.dto.DeviceSpecsDTO;
 import com.premit.tech_specs_services.service.DeviceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -24,5 +21,10 @@ public class DeviceSpecsController {
         return result;
     }
 
+    @GetMapping(path="/objects")
+    public List<DeviceSpecsDTO> getAllDevices(){
+        List<DeviceSpecsDTO> retrievedDeviceSpecsDTOList = deviceService.getAllDevices();
+        return retrievedDeviceSpecsDTOList;
+    }
 
 }
