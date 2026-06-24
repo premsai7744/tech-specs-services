@@ -27,4 +27,9 @@ public class DeviceSpecsController {
         return retrievedDeviceSpecsDTOList;
     }
 
+    @GetMapping(path="/device/{id}")
+    public DeviceSpecsDTO getDeviceById(@PathVariable String id){
+        DeviceSpecsDTO deviceSpecsDTO = deviceService.getDeviceById(id);
+        return deviceSpecsDTO;
+    }
 }

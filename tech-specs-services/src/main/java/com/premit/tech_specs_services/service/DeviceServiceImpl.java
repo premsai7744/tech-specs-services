@@ -8,9 +8,11 @@ import com.premit.tech_specs_services.repository.DeviceSpecsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.html.Option;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 public class DeviceServiceImpl implements DeviceService{
@@ -69,5 +71,32 @@ public class DeviceServiceImpl implements DeviceService{
             deviceSpecsDTOList.add(deviceSpecsDTO);
         });
         return deviceSpecsDTOList;
+    }
+
+    @Override
+    public DeviceSpecsDTO getDeviceById(String id) {
+
+        DeviceSpecsDTO deviceSpecsDTO = null;
+
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        Optional<DeviceSpecsEntity> optionalDeviceSpecsEntity = deviceSpecsRepository.findById(id);
+        if (optionalDeviceSpecsEntity.isPresent()){
+           DeviceSpecsEntity deviceSpecsEntity = optionalDeviceSpecsEntity.get();
+            deviceSpecsDTO = new DeviceSpecsDTO();
+            deviceSpecsDTO.setId(deviceSpecsEntity.getId());
+            deviceSpecsDTO.setName(deviceSpecsEntity.getName());
+            String json = deviceSpecsEntity.getData();
+            try{
+                Map<String,Object> parsedMapObject = objectMapper.readValue(json, new TypeReference<Map<String,Object>>() {});
+                deviceSpecsDTO.setData(parsedMapObject);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return deviceSpecsDTO;
+        } else {
+            return deviceSpecsDTO;
+        }
+
     }
 }

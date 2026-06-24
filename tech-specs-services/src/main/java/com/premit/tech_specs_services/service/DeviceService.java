@@ -7,4 +7,5 @@ import java.util.List;
 public interface DeviceService {
     public abstract String addDevices(List<DeviceSpecsDTO> deviceSpecsDTOList);
     public List<DeviceSpecsDTO> getAllDevices();
+    public DeviceSpecsDTO getDeviceById(String id);
 }
