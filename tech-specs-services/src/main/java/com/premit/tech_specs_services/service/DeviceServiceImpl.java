@@ -6,6 +6,7 @@ import com.premit.tech_specs_services.dto.DeviceSpecsDTO;
 import com.premit.tech_specs_services.entity.DeviceSpecsEntity;
 import com.premit.tech_specs_services.repository.DeviceSpecsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import javax.swing.text.html.Option;
@@ -13,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class DeviceServiceImpl implements DeviceService{
@@ -99,4 +101,75 @@ public class DeviceServiceImpl implements DeviceService{
         }
 
     }
+
+    @Override
+    public DeviceSpecsDTO getDeviceByName(String name) {
+
+        DeviceSpecsDTO deviceSpecsDTO = null;
+
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        Optional<DeviceSpecsEntity> optionalDeviceSpecsEntity = deviceSpecsRepository.findByName(name);
+        if (optionalDeviceSpecsEntity.isPresent()){
+            DeviceSpecsEntity deviceSpecsEntity = optionalDeviceSpecsEntity.get();
+            deviceSpecsDTO = new DeviceSpecsDTO();
+            deviceSpecsDTO.setId(deviceSpecsEntity.getId());
+            deviceSpecsDTO.setName(deviceSpecsEntity.getName());
+            String json = deviceSpecsEntity.getData();
+            try{
+                Map<String,Object> parsedMapObject = objectMapper.readValue(json, new TypeReference<Map<String,Object>>() {});
+                deviceSpecsDTO.setData(parsedMapObject);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return deviceSpecsDTO;
+        } else {
+            return deviceSpecsDTO;
+        }
+    }
+
+    @Override
+    public List<DeviceSpecsDTO> getDeviceByFilters(Map<String, String> values) {
+       Specification<DeviceSpecsEntity> specification = null;
+        ObjectMapper mapper = new ObjectMapper();
+        for(Map.Entry<String,String> entry : values.entrySet()){
+            String key = entry.getKey();
+            String value = entry.getValue();
+
+            Specification<DeviceSpecsEntity> spec =
+                    (root,query,cb)->
+                            cb.equal(root.get(key),value);
+
+            if(specification==null){
+                specification = spec;
+            } else {
+                specification.and(spec);
+            }
+        }
+        List<DeviceSpecsEntity> deviceSpecsEntityList = deviceSpecsRepository.findAll(specification);
+        List<DeviceSpecsDTO> deviceSpecsDTOList = deviceSpecsEntityList.stream().map(entity->{
+            DeviceSpecsDTO dto = new DeviceSpecsDTO();
+            dto.setName(entity.getName());
+            dto.setId(entity.getId());
+           try{
+               Map<String,Object> parsedMap = mapper.readValue(entity.getData(), new TypeReference<Map<String,Object>>() {
+               });
+               dto.setData(parsedMap);
+           } catch(Exception e) {
+               e.printStackTrace();
+           }
+            return dto;
+        }).collect(Collectors.toList());
+        return deviceSpecsDTOList;
+    }
+
+
+
+
+
+
+
+
+
+
 }

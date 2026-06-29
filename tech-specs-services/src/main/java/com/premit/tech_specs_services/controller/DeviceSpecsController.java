@@ -7,6 +7,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 public class DeviceSpecsController {
@@ -31,5 +32,17 @@ public class DeviceSpecsController {
     public DeviceSpecsDTO getDeviceById(@PathVariable String id){
         DeviceSpecsDTO deviceSpecsDTO = deviceService.getDeviceById(id);
         return deviceSpecsDTO;
+    }
+
+    @GetMapping(path="/device/name/{name}")
+    public DeviceSpecsDTO getDeviceByName(@PathVariable String name) {
+        DeviceSpecsDTO deviceSpecsDTO = deviceService.getDeviceByName(name);
+        return deviceSpecsDTO;
+    }
+
+    @GetMapping(path="/device/filter")
+    public List<DeviceSpecsDTO> getDeviceByFilters(@RequestParam Map<String,String> values){
+        List<DeviceSpecsDTO> deviceSpecsDTOList = deviceService.getDeviceByFilters(values);
+        return deviceSpecsDTOList;
     }
 }
