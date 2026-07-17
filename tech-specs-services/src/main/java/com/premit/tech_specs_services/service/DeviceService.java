@@ -1,6 +1,7 @@
 package com.premit.tech_specs_services.service;
 
 import com.premit.tech_specs_services.dto.DeviceSpecsDTO;
+import org.springframework.web.bind.annotation.RequestHeader;
 
 import java.util.List;
 import java.util.Map;
